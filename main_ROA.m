@@ -3,13 +3,16 @@ clear all
 close all
 clc
 yalmip 'clear'
+
 %% Matrix Uncertainty Parameters
 vertflag = 0;    % Use 1 for full vertices required to represent a norm uncertainty. Use 0 for structured uncertainty. 
 epsA = 0.1;     
-epsB = 0.1;     % These are infinity or 1 norm bounds on the matrix uncertainties. 
+epsB = 0.1;      % These are infinity norm bounds on the matrix uncertainties. 
+
 %% Load all required sets and parameters for MPC
 [Anom,Bnom, delAv, delBv, K, A, B, X, U, Xlb, Xub, Ulb, Uub, nx, nu, wub, wlb, Q, R, N_max, N_thres] = sys_load(vertflag, epsA, epsB);
 W = Polyhedron('lb',wlb*ones(nx,1),'ub',wub*ones(nx,1));
+
 %% Form the terminal set and Cost here 
 [Xn, Pinf] = term_setRobPar(Anom, Bnom, delAv, delBv, K, X, U, W, Q, R, nx, nu); 
 
@@ -36,11 +39,9 @@ else
   boldAvbar = obtain_boldAvbar(N_max, nx);        
   [t_w{1}, t_1{1}, t_2{1}, t_3{1}] = bounds(Fx, Anom, Bnom, N_max, N_thres, boldAvbar, delAv, delBv, nx, nu);
 end                                             
+
 %% Compute the ROA i.e., Nmax-Step Rob. Controllable Set
-count_inf = 0;                      
-xfeas = [];
-xinfs = []; 
-%%% Add as many direction vectors as wished
+%%% Add as many direction vectors as you wish
 dVector{1} =  [1;1];
 dVector{2} = [ 0;1];
 dVector{3} = [ 1;0];
@@ -50,25 +51,20 @@ dVector{6} = [2;6];
 dVector{7} = [-6;8.2];
 dVector{8} = [8.1;-6.2];
 dVector{9} = [8.0;-4.439];
+%% search in the negative directions too
 vSign{1}    =  1;
 vSign{2}    = -1;
-%%%
 
+%% Main Loop 
 x0feas = [];
-counter = 1;
-idxBestNorm = [];
+
 for i = 1:length(dVector)
-    for j =1:length(vSign)
-            [x0feas_out{1}, x0feasNormOut(1)] = FTOCP(dVector{i}, vSign{j}, N_max, Anom, Bnom, Xn, X, U, W, wub, nx, nu, ...
-                                                                                       setdelA, setdelB, t_w{1}, t_1{1}, t_2{1}, t_3{1});   
-        % pick best cost 
-        [~, ind_maxNorm] = max(x0feasNormOut); 
-        x0feas_normout{i,j} = x0feasNormOut;
-        
-        idxBestNorm = [idxBestNorm, ind_maxNorm];
-    
-        x0feas = [x0feas, x0feas_out{ind_maxNorm}];
-        counter = counter + 1;
+    for j = 1:2
+        [x0feas_out, x0feasNormOut] = FTOCP(dVector{i}, vSign{j}, N_max, Anom, Bnom, Xn, X, U, W, wub, nx, nu, ...
+                                                                                   setdelA, setdelB, t_w{1}, t_1{1}, t_2{1}, t_3{1});   
+        if x0feasNormOut ~= -inf
+            x0feas = [x0feas, x0feas_out];   % only if feasible 
+        end
     end
 end
 
