@@ -6,13 +6,16 @@ clear all
 close all
 clc
 yalmip 'clear'
+
 %% Matrix Uncertainty Parameters
 vertflag = 0;    % Use 1 for full vertices required to represent a norm uncertainty. Use 0 for structured uncertainty. 
 epsA = 0.1;     
-epsB = 0.1;     % These are infinity or 1 norm bounds on the matrix uncertainties. 
+epsB = 0.1;      % These are infinity norm bounds on the matrix uncertainties. 
+
 %% Load all required sets and parameters for MPC
 [Anom,Bnom, delAv, delBv, K, A, B, X, U, Xlb, Xub, Ulb, Uub, nx, nu, wub, wlb, Q, R, N_max, N_thres] = sys_load(vertflag, epsA, epsB);
 W = Polyhedron('lb',wlb*ones(nx,1),'ub',wub*ones(nx,1));
+
 %% Create sample initial conditions to solve from   
 Ninit = 100; 
 vec1 = linspace(Xlb(1), Xub(1),sqrt(Ninit)); 
@@ -23,8 +26,10 @@ for i = 1:length(vec1)
         x_s = [x_s, [vec2(j); vec1(i)]]; 
     end
 end 
+
 %% Form the terminal set and Cost here 
 [Xn, Pinf] = term_setRobPar(Anom, Bnom, delAv, delBv, K, X, U, W, Q, R, nx, nu); 
+
 %% Get all possible vertices of matrix uncertainty
 % Needed for constraint loop
 for i = 1:size(delAv,2)/nx
