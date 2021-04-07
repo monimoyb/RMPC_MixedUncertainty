@@ -35,7 +35,7 @@ end
         end
         
    v = sdpvar(nu*N,1);                                                     % nominal inputs
-   xbf = sdpvar(nx*(N+1),1);                                            % nominal states 
+   xbf = sdpvar(nx*(N+1),1);                                               % nominal states 
    
    Lambda = sdpvar(size(Fx,1), size(boldHw,1), 'full');    
    gamma = sdpvar(size(boldHw,1), size(boldHu,1), 'full'); 
@@ -91,7 +91,7 @@ end
    sol_time = diagn.solvertime;
    
    if feas_flag ~=0
-       cost_flag = inf;                             % store high cost if any issue
+       cost_flag = inf;                       % store high cost if any issue
        v_hor = zeros(nu*N,1);                 % just store some dummy 0's if infeasible anyway 
    else
        cost_flag = double(obj_ol);            % store right cost if feasible  
