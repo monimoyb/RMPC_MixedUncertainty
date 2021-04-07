@@ -37,7 +37,7 @@ end
         end
         
    v = sdpvar(nu*N,1);                                                     % nominal inputs     
-   xbf = sdpvar(nx*(N+1),1);                                            % nominal states 
+   xbf = sdpvar(nx*(N+1),1);                                               % nominal states 
 
    gamma = sdpvar(size(boldHw,1), size(boldHu,1), 'full'); 
    
@@ -96,9 +96,9 @@ end
    if feas_flag ~=0
        cost_flag = inf;                     % store high cost if any issue
        x0feas_out = double(x0feas);
-       x0feasNormOut = 0;
+       x0feasNormOut = -inf;                % infeasibility flag
    else
-       cost_flag = double(cost);        % store right cost if feasible  
+       cost_flag = double(cost);            % store right cost if feasible  
        v_hor = double(v); 
        x0feas_out = double(x0feas);
        x0feasNormOut = norm(x0feas_out,2);
