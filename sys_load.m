@@ -1,5 +1,5 @@
 %% Function defining System and Constraint Matrices 
-
+%  Monimoy Bujarbaruah
 
 function [Anom,Bnom, delAv, delBv, K, A, B, X, U, Xlb, Xub, Ulb, Uub, nx, nu, wub,wlb, Q, R, N_max, N_thres] = sys_load(vertflag, epsA, epsB)
 
@@ -40,11 +40,13 @@ A = [1, 0.1;
 
 B = [0; 
      1.0];                                                                                                                       
+
 %% Weights
 Q =  10*eye(nx);
 R =   2*eye(nu);
+
 %% Horizon and cut-off for bounds
-N_max = 4;            % try horizon from 5 to 1 by shrinking
+N_max = 4;             % try horizon from 5 to 1 by shrinking
 N_thres = 4;           % beyond this value do the binomial tail. 
  
 %% Considering constraints of the form -a<=x(i)<=a and -ulb<=u<=uub
@@ -57,7 +59,7 @@ X = Polyhedron('lb',Xlb,'ub',Xub);
 U = Polyhedron('lb',Ulb,'ub',Uub);                                            
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% Disturbance  Bounds 
-wub = 0.1;                                   % Upper bound of additive noise value
+wub = 0.1;                                    % Upper bound of additive noise value
 wlb = -0.1;                                   % Lower bound of additive noise value
 
 end
