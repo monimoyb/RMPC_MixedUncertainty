@@ -1,3 +1,5 @@
+% Using the function from https://www.mathworks.com/matlabcentral/fileexchange/7147-permn
+
 function [M, I] = permn(V, N, K)
 % PERMN - permutations with repetition
 %   Using two input variables V and N, M = PERMN(V,N) returns all
