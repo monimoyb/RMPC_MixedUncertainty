@@ -46,7 +46,7 @@ Q =  10*eye(nx);
 R =   2*eye(nu);
 
 %% Horizon and cut-off for bounds
-N_max = 4;             % try horizon from 5 to 1 by shrinking
+N_max = 4;             % max horizon N in the paper 
 N_thres = 4;           % beyond this value do the binomial tail. 
  
 %% Considering constraints of the form -a<=x(i)<=a and -ulb<=u<=uub
