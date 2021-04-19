@@ -1,7 +1,7 @@
 %% Finite time optimal control problem: This one used to get the time values
 
 
-function [feas_flag, cost_flag, v_hor, sol_time] = FTOCP_Time(x_0, N, Anom, Bnom, Xn, X, U, W, wub, nx, nu, Q, R, Pinf, setdelA, setdelB, t_w, t_1, t_2, t_3)
+function [feas_flag, cost_flag, v_hor, sol_time] = FTOCP_Time(x_0, N, Anom, Bnom, Xn, X, U, W, wub, nx, nu, Q, R, Pinf, setdelA, setdelB, t_w, t_1, t_2, t_3, t_delTaA, t_delTaB)
 
 options = sdpsettings('solver','gurobi','verbose',0);
 
@@ -67,7 +67,7 @@ end
      
  %%%% Now in this case I do not want to dualize Dela and Delb!!              
      constraints = [constraints; Fx*boldAbar*xbf(1:end-nx,1) + Fx*boldBbar*v...
-                                     + (t_1)*norm(xbf(1:end-nx,1),inf) + (t_2)*(norm(M, inf)*wub+norm(v, inf)) + (t_3)*norm(M,inf)*wub...
+                                     + (t_1+t_delTaA)*norm(xbf(1:end-nx,1),inf) + (t_2+t_delTaB)*(norm(M, inf)*wub+norm(v, inf)) + (t_3)*norm(M,inf)*wub...
                                      + (t_w)*wub + Lambda*boldhw <= fx];                                                                  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
