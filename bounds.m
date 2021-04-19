@@ -120,7 +120,7 @@ function [t_w, t_1, t_2, t_3, t_delTaA, t_delTaB] = bounds(Fx, Anom, Bnom, N, N_
         for j = 1: size(final_combvert,1)
             delmattmp = []; 
             for k = 1:N-1
-                delmattmp = [delmattmp; kron( eye(N), mat_comb(:,(k-1)*nx+1: k*nx,j) - Anom^k )];               % TAKING ANOM POWER OUT 
+                delmattmp = [delmattmp; kron( eye(N), mat_comb(:,(k-1)*nx+1: k*nx,j) - Anom^k )];               
             end
             delmat(:,:,j) = delmattmp; 
         end
@@ -135,7 +135,7 @@ function [t_w, t_1, t_2, t_3, t_delTaA, t_delTaB] = bounds(Fx, Anom, Bnom, N, N_
         end
 
         %% Find the bounds by trying ALL vertex combinations row-wise
-        for row = 1: size(Fx,1)                                                                                 % go row-wise       
+        for row = 1: size(Fx,1)                                                                                    
             % formed stacked matrices. Each one is a combination 
             % Now need to unpack and evaluate cost !!!
             cost_w = zeros(size(final_combvert,1), 1); 
@@ -222,7 +222,7 @@ function [t_w, t_1, t_2, t_3, t_delTaA, t_delTaB] = bounds(Fx, Anom, Bnom, N, N_
         for j = 1: size(final_combvert,1)
             delmattmp = []; 
             for k = 1:N_thres-1
-                delmattmp = [delmattmp; kron( eye(N), mat_comb(:,(k-1)*nx+1: k*nx,j) - Anom^k)];            % TAKE ANOM POWER OUT! 
+                delmattmp = [delmattmp; kron( eye(N), mat_comb(:,(k-1)*nx+1: k*nx,j) - Anom^k)];             
             end
             delmat(:,:,j) = delmattmp; 
         end
@@ -238,7 +238,7 @@ function [t_w, t_1, t_2, t_3, t_delTaA, t_delTaB] = bounds(Fx, Anom, Bnom, N, N_
         end
 
         %% Find the bounds by trying ALL vertex combinations row-wise
-        for row = 1: size(Fx,1)                                 % go row-wise 
+        for row = 1: size(Fx,1)                                
             % formed stacked matrices. Each one is a combination 
             % Now need to unpack and evaluate cost !!!
             % Form the required chunk of the boldAvbar matrix
