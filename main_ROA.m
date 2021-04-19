@@ -27,18 +27,18 @@ end
 
 %% Compute Bounds
 if N_max == 1
-   Fx = Xn.A; 
-   t_w{1} = zeros(size(Fx,1),1);
-   t_1{1} = zeros(size(Fx,1),1);
-   t_2{1} = zeros(size(Fx,1),1); 
-   t_3{1} = zeros(size(Fx,1),1);
-   t_delTaA{1} = zeros(size(Fx,1),1);
-   t_delTaB{1} = zeros(size(Fx,1),1);
+    Fx = Xn.A; 
+    t_w{1} = zeros(size(Fx,1),1);
+    t_1{1} = zeros(size(Fx,1),1);
+    t_2{1} = zeros(size(Fx,1),1); 
+    t_3{1} = zeros(size(Fx,1),1);
+    t_delTaA{1} = zeros(size(Fx,1),1);
+    t_delTaB{1} = zeros(size(Fx,1),1);
 else
 %% Form the other system matrices and load all the bounds here 
-  Fx = blkdiag(kron(eye(N_max-1), X.A), Xn.A); 
-  boldAvbar = obtain_boldAvbar(N_max, nx);        
-  [t_w{1}, t_1{1}, t_2{1}, t_3{1}, t_delTaA{1}, t_delTaB{1}] = bounds(Fx, Anom, Bnom, N_max, N_thres, boldAvbar, delAv, delBv, nx, nu);
+    Fx = blkdiag(kron(eye(N_max-1), X.A), Xn.A); 
+    boldAvbar = obtain_boldAvbar(N_max, nx);        
+    [t_w{1}, t_1{1}, t_2{1}, t_3{1}, t_delTaA{1}, t_delTaB{1}] = bounds(Fx, Anom, Bnom, N_max, N_thres, boldAvbar, delAv, delBv, nx, nu);
 end                                             
 
 %% Compute the ROA i.e., Nmax-Step Rob. Controllable Set
