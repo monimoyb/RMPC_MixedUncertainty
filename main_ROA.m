@@ -33,11 +33,13 @@ if N_max == 1
    t_1{1} = zeros(size(Fx,1),1);
    t_2{1} = zeros(size(Fx,1),1); 
    t_3{1} = zeros(size(Fx,1),1);
+   t_delTaA{1} = zeros(size(Fx,1),1);
+   t_delTaB{1} = zeros(size(Fx,1),1);
 else
 %% Form the other system matrices and load all the bounds here 
   Fx = blkdiag(kron(eye(N_max-1), X.A), Xn.A); 
   boldAvbar = obtain_boldAvbar(N_max, nx);        
-  [t_w{1}, t_1{1}, t_2{1}, t_3{1}] = bounds(Fx, Anom, Bnom, N_max, N_thres, boldAvbar, delAv, delBv, nx, nu);
+  [t_w{1}, t_1{1}, t_2{1}, t_3{1}, t_delTaA{1}, t_delTaB{1}] = bounds(Fx, Anom, Bnom, N_max, N_thres, boldAvbar, delAv, delBv, nx, nu);
 end                                             
 
 %% Compute the ROA i.e., Nmax-Step Rob. Controllable Set
@@ -61,7 +63,7 @@ x0feas = [];
 for i = 1:length(dVector)
     for j = 1:2
         [x0feas_out, x0feasNormOut] = FTOCP(dVector{i}, vSign{j}, N_max, Anom, Bnom, Xn, X, U, W, wub, nx, nu, ...
-                                                                                   setdelA, setdelB, t_w{1}, t_1{1}, t_2{1}, t_3{1});   
+                                            setdelA, setdelB, t_w{1}, t_1{1}, t_2{1}, t_3{1}, t_delTaA{1}, t_delTaB{1});   
         if x0feasNormOut ~= -inf
             x0feas = [x0feas, x0feas_out];   % only if feasible 
         end
