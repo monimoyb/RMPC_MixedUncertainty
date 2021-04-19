@@ -46,7 +46,7 @@ for Nhor = 1:N_max
     Fx = blkdiag(kron(eye(Nhor-1), X.A), Xn.A); 
     boldAvbar = obtain_boldAvbar(Nhor, nx);        
     tic
-        [t_w{Nhor}, t_1{Nhor}, t_2{Nhor}, t_3{Nhor}] = bounds(Fx, Anom, Bnom, Nhor, N_thres, boldAvbar, delAv, delBv, nx, nu);
+        [t_w{Nhor}, t_1{Nhor}, t_2{Nhor}, t_3{Nhor}, t_delTaA{Nhor}, t_delTaB{Nhor}] = bounds(Fx, Anom, Bnom, Nhor, N_thres, boldAvbar, delAv, delBv, nx, nu);
     bound_time(Nhor) = toc; 
 end
 
@@ -57,10 +57,11 @@ for i=1:Ninit
     % solve with varying horizons here. Pick the best cost and go ahead 
     for Nhor = 1:N_max 
          [feas_flag(Nhor), cost_flag(Nhor), v_horN{Nhor}, sol_time(Nhor, i)] = FTOCP_Time(x_init, Nhor, Anom, Bnom, Xn, X, U, W, wub, nx, nu, Q, R, Pinf, ...
-                                                                                                                               setdelA, setdelB, t_w{Nhor}, t_1{Nhor}, t_2{Nhor}, t_3{Nhor}); 
+                                                                setdelA, setdelB, t_w{Nhor}, t_1{Nhor}, t_2{Nhor}, t_3{Nhor}, t_delTaA{Nhor}, t_delTaB{Nhor}); 
     end
     yalmip 'clear'         
 end
 
 %% Get the mean solver time 
 online_time = mean(sol_time,2);                                                    % for each horizon
+
