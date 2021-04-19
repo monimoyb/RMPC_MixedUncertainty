@@ -1,4 +1,5 @@
 %% Compute all the bounding terms. First go up to threshold horizon and then bound binomial tail 
+% Monimoy Bujarbaruah
 
 
 function [t_w, t_1, t_2, t_3] = bounds(Fx, Anom, Bnom, N, N_thres, boldAvbar, delAv, delBv, nx, nu)
@@ -85,11 +86,11 @@ if N>=2 && N<=N_thres         % give values of N \geq 2 and N \leq N_thres.
     if N == 5
         pre_final=combvec(sz{4}, sz{3}, sz{2}, sz{1})';                                                       % N = 5 case
     elseif N == 4
-        pre_final=combvec(sz{3}, sz{2}, sz{1})';                                                                 % N = 4 case
+        pre_final=combvec(sz{3}, sz{2}, sz{1})';                                                              % N = 4 case
     elseif N == 3
-        pre_final=combvec(sz{2}, sz{1})';                                                                           % N = 3 case
+        pre_final=combvec(sz{2}, sz{1})';                                                                     % N = 3 case
     elseif N == 2
-        pre_final=combvec(sz{1})';                                                                                     % N = 2 case 
+        pre_final=combvec(sz{1})';                                                                            % N = 2 case 
     end
 
     for i=1:N-1
@@ -208,11 +209,11 @@ else           % N>N_thres. Use binomila tail for the remaining bounds
     if N_thres == 5
         pre_final=combvec(sz{4}, sz{3}, sz{2}, sz{1})';                                                       % N_thres = 5 case
     elseif N_thres == 4
-        pre_final=combvec(sz{3}, sz{2}, sz{1})';                                                                 % N_thres = 4 case
+        pre_final=combvec(sz{3}, sz{2}, sz{1})';                                                              % N_thres = 4 case
     elseif N_thres == 3
-        pre_final=combvec(sz{2}, sz{1})';                                                                           % N_thres = 3 case
+        pre_final=combvec(sz{2}, sz{1})';                                                                     % N_thres = 3 case
     elseif N_thres == 2
-        pre_final=combvec(sz{1})';                                                                                     % N_thres = 2 case 
+        pre_final=combvec(sz{1})';                                                                            % N_thres = 2 case 
     end
 
        
