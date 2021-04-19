@@ -30,7 +30,7 @@ else
      delBv = [[0; -epsB], [0; epsB], [epsB; 0], [-epsB; 0] ];
        
      %%%%%%%%% choose the feedback gain K here%%%
-     K = place(Anom, Bnom, [0.735; 0.75]);             
+     K = place(Anom, Bnom, [0.745; 0.75]);             
 end
                                                                            
 
@@ -46,8 +46,8 @@ Q =  10*eye(nx);
 R =   2*eye(nu);
 
 %% Horizon and cut-off for bounds
-N_max = 4;             % max horizon N in the paper 
-N_thres = 4;           % beyond this value do the binomial tail. 
+N_max = 3;             % max horizon N in the paper 
+N_thres = 3;           % beyond this value do the binomial tail. 
  
 %% Considering constraints of the form -a<=x(i)<=a and -ulb<=u<=uub
 Xlb = -[8; 8];
