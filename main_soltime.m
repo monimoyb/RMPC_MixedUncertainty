@@ -1,5 +1,5 @@
 %% Robust MPC with Parametric Uncertainty: Main Code to get Time Values 
-% Solves Nmax MPC problems with horizons 1 to Nmax from Ninit sample
+% Solves Nmax MPC problems with horizons 1 to Nmax from Ninit samples
 % initial conditions
 
 clear all
@@ -8,12 +8,11 @@ clc
 yalmip 'clear'
 
 %% Matrix Uncertainty Parameters
-vertflag = 0;    % Use 1 for full vertices required to represent a norm uncertainty. Use 0 for structured uncertainty. 
 epsA = 0.1;     
 epsB = 0.1;      % These are infinity norm bounds on the matrix uncertainties. 
 
 %% Load all required sets and parameters for MPC
-[Anom,Bnom, delAv, delBv, K, A, B, X, U, Xlb, Xub, Ulb, Uub, nx, nu, wub, wlb, Q, R, N_max, N_thres] = sys_load(vertflag, epsA, epsB);
+[Anom,Bnom, delAv, delBv, K, A, B, X, U, Xlb, Xub, Ulb, Uub, nx, nu, wub, wlb, Q, R, N_max, N_thres] = sys_load(epsA, epsB);
 W = Polyhedron('lb',wlb*ones(nx,1),'ub',wub*ones(nx,1));
 
 %% Create sample initial conditions to solve from   
@@ -46,7 +45,7 @@ for Nhor = 1:N_max
     Fx = blkdiag(kron(eye(Nhor-1), X.A), Xn.A); 
     boldAvbar = obtain_boldAvbar(Nhor, nx);        
     tic
-        [t_w{Nhor}, t_1{Nhor}, t_2{Nhor}, t_3{Nhor}, t_delTaA{Nhor}, t_delTaB{Nhor}] = bounds(Fx, Anom, Bnom, Nhor, N_thres, boldAvbar, delAv, delBv, nx, nu);
+    [t_w{Nhor}, t_1{Nhor}, t_2{Nhor}, t_3{Nhor}, t_delTaA{Nhor}, t_delTaB{Nhor}] = bounds(Fx, Anom, Bnom, Nhor, N_thres, boldAvbar, delAv, delBv, nx, nu);
     bound_time(Nhor) = toc; 
 end
 
@@ -56,7 +55,7 @@ for i=1:Ninit
     x_init = x_s(:,i); 
     % solve with varying horizons here. Pick the best cost and go ahead 
     for Nhor = 1:N_max 
-         [feas_flag(Nhor), cost_flag(Nhor), v_horN{Nhor}, sol_time(Nhor, i)] = FTOCP_Time(x_init, Nhor, Anom, Bnom, Xn, X, U, W, wub, nx, nu, Q, R, Pinf, ...
+        [feas_flag(Nhor), cost_flag(Nhor), v_horN{Nhor}, sol_time(Nhor, i)] = FTOCP_Time(x_init, Nhor, Anom, Bnom, Xn, X, U, W, wub, nx, nu, Q, R, Pinf, ...
                                                                 setdelA, setdelB, t_w{Nhor}, t_1{Nhor}, t_2{Nhor}, t_3{Nhor}, t_delTaA{Nhor}, t_delTaB{Nhor}); 
     end
     yalmip 'clear'         
