@@ -167,7 +167,7 @@ function [t_w, t_1, t_2, t_3, t_delTaA, t_delTaB] = bounds(Fx, Anom, Bnom, N, N_
 
     elseif N==1    % For N=1 case   
 
-          disp('**N=1. Nothing to bound with norms**')
+          disp('**N=1 case encountered. Nothing to bound with norms in this case**')
 
     else           % N>N_thres. Use binomila tail for the remaining bounds
         %% FORM POSSIBLE VERTICES FOR A_DELA^n from n=1 to N_thres-1 
