@@ -67,11 +67,17 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
         Lambda = sdpvar(size(Fx,1), size(boldHw,1), 'full');                                % dual variables
         constraints = [constraints, Lambda >=0]; 
 
-        constraints = [constraints; Fx*boldAbar*xbf(1:end-nx,1) + Fx*boldBbar*v...
-                      + (t_1+t_delTaA)*norm(xbf(1:end-nx,1),inf) + (t_2+t_delTaB)*(norm(M, inf)*wub+norm(v, inf)) + (t_3)*norm(M,inf)*wub...
-                      + (t_w)*wub + Lambda*boldhw <= fx];  
-
-
+        %%% Verex enumeration step here for two terms linear in model mismatches
+        for ii = 1:size(setdelA,3)
+            bolddelA = kron(eye(N),setdelA(:,:,ii));
+                for jj = 1:size(setdelB,3) 
+                    bolddelB = kron(eye(N),setdelB(:,:,jj));
+                    constraints = [constraints; Fx*boldAbar*xbf(1:end-nx,1) + Fx*boldBbar*v + Fx*boldA1bar*bolddelA*xbf(1:end-nx,1) + Fx*boldA1bar*bolddelB*v...
+                                     + (t_1)*norm(xbf(1:end-nx,1),inf) + (t_2+t_delTaB)*(norm(M, inf)*wub) + t_2*norm(v, inf) + (t_3)*norm(M,inf)*wub...
+                                     + (t_w)*wub + Lambda*boldhw <= fx];
+                end
+        end
+                                                        
         constraints = [constraints, Fx*boldBbar*M + Fx*(boldA1bar*boldBbar - boldBbar)*M + Fx*eye(size(boldA1bar,1)) == Lambda*boldHw];
 
     end
