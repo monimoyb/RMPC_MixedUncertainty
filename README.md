@@ -4,6 +4,6 @@ These set of codes replicate the Region of Attraction (ROA) and the computation 
 
 ![roa](https://user-images.githubusercontent.com/12418616/115521712-468a2f80-a240-11eb-9e5f-a9011b7233c3.png)
 
-The ROA of our approach (denoted by Algorithm 1) is ~12x bigger than the ROA from the Constrained LQR. Although the ROA of the Tube MPC is only about 5% smaller in volume, our algorithm, is computationally more efficient than the Tube MPC for all considered horizons. This is seen in the table below. 
+The ROA of our approach (denoted by Algorithm 1) is ~12x bigger than the ROA from the Constrained LQR. Although the ROA of the Tube MPC is only about 4% smaller in volume, our algorithm, is computationally more efficient than the Tube MPC for all considered horizons. This is seen in the table below. 
 
 ![time](https://user-images.githubusercontent.com/12418616/115521737-4e49d400-a240-11eb-9193-354944b86bc7.png)
