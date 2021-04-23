@@ -36,8 +36,7 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
     v = sdpvar(nu*N,1);                                                     % nominal inputs     
     xbf = sdpvar(nx*(N+1),1);                                               % nominal states 
 
-    gamma = sdpvar(size(boldHw,1), size(boldHu,1), 'full'); 
-
+    Lambda = sdpvar(size(Fx,1), size(boldHw,1), 'full'); 
     x0feas = sdpvar(nx,1);
 
     %% Solving the Optimization Problems with varying horizon 
@@ -48,7 +47,6 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
 
    %% Cleanly separate the cases here. 
     if N ==1 
-        Lambda = sdpvar(size(Fx,1), size(boldHw,1), 'full'); 
         constraints = [constraints; Lambda>=0];
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       %%% enumerate the set of vertices here 
@@ -57,14 +55,15 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
             for jj = 1:size(setdelB,3) 
                 bolddelB = kron(eye(N),setdelB(:,:,jj));
                 constraints = [constraints; Fx*((boldAbar+bolddelA)*x0feas + (boldBbar+bolddelB)*v) + Lambda*boldhw...
-                                                                                    <= fx + soft_flg*epsilon];
+                                                                                    <= fx];
             end
         end
 
         constraints = [constraints; Lambda*boldHw == Fx];
+        constraints = [constraints; boldHu*v <= boldhu];
 
     else 
-        Lambda = sdpvar(size(Fx,1), size(boldHw,1), 'full');                                % dual variables
+        gamma = sdpvar(size(boldHw,1), size(boldHu,1), 'full'); 
         constraints = [constraints, Lambda >=0]; 
 
         %%% Verex enumeration step here for two terms linear in model mismatches
@@ -79,18 +78,17 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
         end
                                                         
         constraints = [constraints, Fx*boldBbar*M + Fx*(boldA1bar*boldBbar - boldBbar)*M + Fx*eye(size(boldA1bar,1)) == Lambda*boldHw];
+        constraints = [constraints; gamma >=0];
+        constraints = [constraints; gamma'*boldhw <= boldhu - boldHu*v];
+        constraints = [constraints; (boldHu*M)' == boldHw'*gamma]; 
 
     end
 
-    %%%%%%%%%% These ones remain unaltered for all horizon lengths %%%%%%%%%%
-
-    constraints = [constraints; gamma >=0];
-    constraints = [constraints; gamma'*boldhw <= boldhu - boldHu*v];
-    constraints = [constraints; (boldHu*M)' == boldHw'*gamma];   
+    %%%%%%%%%% These ones remain unaltered for all horizon lengths %%%%%%%%%%  
     constraints = [constraints; dVector(2)*x0feas(1) == dVector(1)*x0feas(2)]; 
     constraints = [constraints; X.A*x0feas <= X.b];
-
     cost = vSign*dVector'*x0feas;  
+    
     diagn=solvesdp(constraints, cost, options);
     feas_flag = diagn.problem; 
 
