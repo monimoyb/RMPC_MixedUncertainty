@@ -18,6 +18,7 @@ function [feas_flag, cost_flag, v_hor, sol_time] = FTOCP_Time(x_0, N, Anom, Bnom
     %% Need to vary N in a loop and solve the optimization problems. Have to pick the best cost
     boldAbar = kron(eye(N),Anom);
     boldBbar = kron(eye(N),Bnom); 
+    
     %% Forming other matrices appearing in the optimization problem 
     Fx = blkdiag(kron(eye(N-1), X.A), Xn.A); 
     fx = [kron(ones(N-1,1),X.b); Xn.b]; 
@@ -28,18 +29,11 @@ function [feas_flag, cost_flag, v_hor, sol_time] = FTOCP_Time(x_0, N, Anom, Bnom
 
     %%%
     constraints = []; 
-    %% Creating Open Loop Optimization Variables for MPC    
-    M = sdpvar(nu*N,nx*N);       
-    for j=1:nu*N
-        for k = 2*j-1:nx*N
-            M(j,k) =0;
-        end
-    end
 
+    %% Creating Open Loop Optimization Variables for MPC   
     v = sdpvar(nu*N,1);                                                     % nominal inputs
     xbf = sdpvar(nx*(N+1),1);                                               % nominal states 
     Lambda = sdpvar(size(Fx,1), size(boldHw,1), 'full');    
-    gamma = sdpvar(size(boldHw,1), size(boldHu,1), 'full'); 
 
     %% Solving the Optimization Problems with varying horizon 
     xbf(1:nx,1) = x_0;        
@@ -59,9 +53,18 @@ function [feas_flag, cost_flag, v_hor, sol_time] = FTOCP_Time(x_0, N, Anom, Bnom
                                                                                       <= fx];
             end
         end
-
         constraints = [constraints; Lambda*boldHw == Fx];
+        constraints = [constraints; Lambda>=0];
+    
     else
+        M = sdpvar(nu*N,nx*N);       
+        for j=1:nu*N
+            for k = 2*j-1:nx*N
+                M(j,k) =0;
+            end
+        end
+        gamma = sdpvar(size(boldHw,1), size(boldHu,1), 'full'); 
+        
         %%% Verex enumeration step here for two terms linear in model mismatches
         for ii = 1:size(setdelA,3)
             bolddelA = kron(eye(N),setdelA(:,:,ii));
@@ -74,13 +77,12 @@ function [feas_flag, cost_flag, v_hor, sol_time] = FTOCP_Time(x_0, N, Anom, Bnom
         end                                                                
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
         constraints = [constraints, Fx*boldBbar*M + Fx*(boldA1bar*boldBbar - boldBbar)*M + Fx*eye(size(boldA1bar,1)) == Lambda*boldHw]; 
+        constraints = [constraints; Lambda>=0; gamma >=0];
+        constraints = [constraints; gamma'*boldhw <= boldhu - boldHu*v];
+        constraints = [constraints; (boldHu*M)' == boldHw'*gamma]; 
     end
 
     %%%%%%%%%% These ones remain unaltered for all horizon lengths %%%%%%%%%%
-
-    constraints = [constraints; Lambda>=0; gamma >=0];
-    constraints = [constraints; gamma'*boldhw <= boldhu - boldHu*v];
-    constraints = [constraints; (boldHu*M)' == boldHw'*gamma]; 
     obj_ol = v'*kron(R,N)*v + cost_state;   
     diagn=solvesdp(constraints, obj_ol, options);
     feas_flag = diagn.problem; 
