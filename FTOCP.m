@@ -27,12 +27,6 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
 
     constraints = []; 
     %% Creating Open Loop Optimization Variables for MPC    
-    M = sdpvar(nu*N,nx*N);       
-    for j=1:nu*N
-        for k = 2*j-1:nx*N
-            M(j,k) =0;
-        end
-    end
     v = sdpvar(nu*N,1);                                                     % nominal inputs     
     xbf = sdpvar(nx*(N+1),1);                                               % nominal states 
 
@@ -48,8 +42,8 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
    %% Cleanly separate the cases here. 
     if N ==1 
         constraints = [constraints; Lambda>=0];
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      %%% enumerate the set of vertices here 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%% enumerate the set of vertices here 
         for ii = 1:size(setdelA,3)
             bolddelA = kron(eye(N),setdelA(:,:,ii));
             for jj = 1:size(setdelB,3) 
@@ -58,11 +52,17 @@ function [x0feas_out, x0feasNormOut] = FTOCP(dVector, vSign, N, Anom, Bnom, Xn, 
                                                                                     <= fx];
             end
         end
-
+        
         constraints = [constraints; Lambda*boldHw == Fx];
         constraints = [constraints; boldHu*v <= boldhu];
 
     else 
+        M = sdpvar(nu*N,nx*N);       
+        for j=1:nu*N
+            for k = 2*j-1:nx*N
+                M(j,k) =0;
+            end
+        end
         gamma = sdpvar(size(boldHw,1), size(boldHu,1), 'full'); 
         constraints = [constraints, Lambda >=0]; 
 
