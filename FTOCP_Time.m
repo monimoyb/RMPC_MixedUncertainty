@@ -68,12 +68,12 @@ function [feas_flag, cost_flag, v_hor, sol_time] = FTOCP_Time(x_0, N, Anom, Bnom
         %%% Verex enumeration step here for two terms linear in model mismatches
         for ii = 1:size(setdelA,3)
             bolddelA = kron(eye(N),setdelA(:,:,ii));
-                for jj = 1:size(setdelB,3) 
-                    bolddelB = kron(eye(N),setdelB(:,:,jj));
-                    constraints = [constraints; Fx*boldAbar*xbf(1:end-nx,1) + Fx*boldBbar*v + Fx*boldA1bar*bolddelA*xbf(1:end-nx,1) + Fx*boldA1bar*bolddelB*v...
-                                     + (t_1)*norm(xbf(1:end-nx,1),inf) + (t_2+t_delTaB)*(norm(M, inf)*wub) + t_2*norm(v, inf) + (t_3)*norm(M,inf)*wub...
-                                     + (t_w)*wub + Lambda*boldhw <= fx];
-                end
+            for jj = 1:size(setdelB,3) 
+                bolddelB = kron(eye(N),setdelB(:,:,jj));
+                constraints = [constraints; Fx*boldAbar*xbf(1:end-nx,1) + Fx*boldBbar*v + Fx*boldA1bar*bolddelA*xbf(1:end-nx,1) + Fx*boldA1bar*bolddelB*v...
+                                 + (t_1)*norm(xbf(1:end-nx,1),inf) + (t_2+t_delTaB)*(norm(M, inf)*wub) + t_2*norm(v, inf) + (t_3)*norm(M,inf)*wub...
+                                 + (t_w)*wub + Lambda*boldhw <= fx];
+            end
         end                                                                
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
         constraints = [constraints, Fx*boldBbar*M + Fx*(boldA1bar*boldBbar - boldBbar)*M + Fx*eye(size(boldA1bar,1)) == Lambda*boldHw]; 
