@@ -94,11 +94,11 @@ function [t_w, t_1, t_2, t_3, t_delTaA, t_delTaB] = bounds(Fx, Anom, Bnom, N, N_
         %%% hard coding the line below!!!%%%%%
         % need to do it from N-1 onward to 1.         
         if N == 4
-            pre_final = combvec(sz{3}, sz{2}, sz{1})';                                                       % N = 4 case
+            pre_final = allcomb(sz{3}, sz{2}, sz{1})';                                                       % N = 4 case
         elseif N == 3
-            pre_final=combvec(sz{2}, sz{1})';                                                                % N = 3 case
+            pre_final = allcomb(sz{2}, sz{1})';                                                              % N = 3 case
         elseif N == 2
-            pre_final=combvec(sz{1})';                                                                       % N = 2 case 
+            pre_final = allcomb(sz{1})';                                                                     % N = 2 case 
         end
 
         for i=1:N-1
@@ -195,11 +195,11 @@ function [t_w, t_1, t_2, t_3, t_delTaA, t_delTaB] = bounds(Fx, Anom, Bnom, N, N_
         %%% hard coding the line below!!!%%%%%
         % need to do it from N_thres-1 onward to 1. 
         if N_thres == 4
-            pre_final=combvec(sz{3}, sz{2}, sz{1})';                                                       % N_thres = 4 case
+            pre_final = allcomb(sz{3}, sz{2}, sz{1})';                                                       % N_thres = 4 case
         elseif N_thres == 3
-            pre_final=combvec(sz{2}, sz{1})';                                                              % N_thres = 3 case
+            pre_final = allcomb(sz{2}, sz{1})';                                                              % N_thres = 3 case
         elseif N_thres == 2
-            pre_final=combvec(sz{1})';                                                                     % N_thres = 2 case 
+            pre_final = allcomb(sz{1})';                                                                     % N_thres = 2 case 
         end
 
         for i=1:N_thres-1
